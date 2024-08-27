@@ -1,0 +1,7 @@
+*.pyc
+/queue_services/node_modules
+/.idea
+queue_services/package-lock.json
+queue_services/package.json
+/queue_services/.serverless
+.env

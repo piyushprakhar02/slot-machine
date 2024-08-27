@@ -1,0 +1,12 @@
+fastapi
+python-decouple
+boto3
+pymysql
+uvicorn
+pydantic
+pydantic[email]
+sqlalchemy
+sqlalchemy-utils
+cryptography
+httpx
+python-jose

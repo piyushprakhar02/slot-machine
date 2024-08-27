@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  authentication-service:
+    build:
+      context: ./authentication_service
+      dockerfile: Dockerfile
+    container_name: authentication-service-container
+    ports:
+      - "5001:8000"  # Mapping the host's port 5001 to the container's port 8000
+    depends_on:
+      - mysql
+    env_file:
+      - .env
+    command: >
+      bash -c "uvicorn app.main:app --host=0.0.0.0 --port=8000"
+      
+
+  game-service:
+    build:
+      context: ./game_service
+      dockerfile: Dockerfile
+    container_name: game-service-container
+    ports:
+      - "5002:8000"  # Mapping the host's port 5002 to the container's port 8000
+    depends_on:
+      - mysql
+    env_file:
+      - .env
+    command: >
+      bash -c "uvicorn app.main:app --host=0.0.0.0 --port=8000"
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: userdb
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  dynamodb-local:
+   command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+   image: "amazon/dynamodb-local:latest"
+   container_name: dynamodb-local
+   ports:
+     - "8000:8000"
+   volumes:
+     - "./docker/dynamodb:/home/dynamodblocal/data"
+   working_dir: /home/dynamodblocal
+
+  aws-cli:
+    image: amazon/aws-cli
+    container_name: aws-cli
+    entrypoint: [ "sh", "-c", "sleep 1d" ]  # Keeps the container running
+    depends_on:
+      - dynamodb-local
+    environment:
+       - AWS_ACCESS_KEY_ID=mock
+       - AWS_SECRET_ACCESS_KEY=mock
+       - AWS_DEFAULT_REGION=us-east-1
+
+
+
+volumes:
+  mysql-data:
+  dynamodb-data:

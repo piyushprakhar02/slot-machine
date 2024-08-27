@@ -1,0 +1,6 @@
+boto3
+pymysql
+sqlalchemy
+sqlalchemy-utils
+cryptography
+python-jose
